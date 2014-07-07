@@ -15,6 +15,7 @@
 @optional
 
 - (void) floatingToolbar:(BLCAwesomeFloatingToolbar *)toolbar didSelectButtonWithTitle:(NSString *)title;
+- (void) floatingToolbar:(BLCAwesomeFloatingToolbar *)toolbar didTryToPanWithOffset:(CGPoint)offset;
 
 @end
 
@@ -23,12 +24,6 @@
 - (instancetype) initWithFourTitles:(NSArray *)titles;
 
 - (void) setEnabled:(BOOL)enabled forButtonWithTitle:(NSString *)title;
-
-// not sure if these methods are being placed properly
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event;
 
 @property (nonatomic, weak) id <BLCAwesomeFloatingToolbarDelegate> delegate;
 
