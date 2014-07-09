@@ -11,13 +11,16 @@
 @interface BLCAwesomeFloatingToolbar ()
 
 @property (nonatomic, strong) NSArray *currentTitles;
-@property (nonatomic, strong) NSArray *colors;
+@property (nonatomic, strong) NSMutableArray *colors;
 @property (nonatomic, strong) NSArray *labels;
 
 @property (nonatomic, weak) UILabel *currentLabel;
 
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+
+@property (nonatomic, strong) UILongPressGestureRecognizer *longTouch;
+
 
 @end
 
@@ -39,12 +42,15 @@
     
     if (self) {
         self.currentTitles = titles;
-        self.colors = @[[UIColor colorWithRed:199/255.0 green:158/255.0 blue:203/255.0 alpha:1],
+        self.colors = [NSMutableArray arrayWithObjects:
+                        [UIColor colorWithRed:199/255.0 green:158/255.0 blue:203/255.0 alpha:1],
                         [UIColor colorWithRed:255/255.0 green:105/255.0 blue:97/255.0 alpha:1],
                         [UIColor colorWithRed:222/255.0 green:165/255.0 blue:164/255.0 alpha:1],
-                        [UIColor colorWithRed:255/255.0 green:179/255.0 blue:71/255.0 alpha:1]];
+                        [UIColor colorWithRed:255/255.0 green:179/255.0 blue:71/255.0 alpha:1], nil];
         
         NSMutableArray *labelsArray = [[NSMutableArray alloc] init];
+        
+        
         
         for (NSString *currentTitle in self.currentTitles) {
             UILabel *label = [[UILabel alloc] init];
@@ -74,6 +80,9 @@
         [self addGestureRecognizer:self.tapGesture];
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
         [self addGestureRecognizer:self.panGesture];
+        
+        self.longTouch = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longFired:)];
+        [self addGestureRecognizer:self.longTouch];
     }
     
     return self;
@@ -103,6 +112,17 @@
         }
         
         [recognizer setTranslation:CGPointZero inView:self];
+    }
+}
+
+- (void) longFired:(UILongPressGestureRecognizer *)recognizer {
+    NSLog(@"This is from the long press");
+    
+    NSUInteger count = [self.colors count];
+    for (NSUInteger i = 0; i < count; ++i) {
+        int nElements = count - i;
+        int n = (arc4random() % nElements) + i;
+        [self.colors exchangeObjectAtIndex:i withObjectAtIndex:n];
     }
 }
 
@@ -152,5 +172,8 @@
         label.alpha = enabled ? 1.0 : 0.25;
     }
 }
+
+
+
 
 @end
