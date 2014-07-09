@@ -91,6 +91,13 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     
+    
+//    These conditionals and variables take in the text from the url input box and then
+//    compares that string to see if it is a regular url, has normal syntax, etc.
+//    If it doesn't have those items it checks to see if there is a space, if so it will
+//    Put the string into a google search query, as a last resort it will take a single word and
+//    Plug it into a google query
+    
     NSString *URLString = textField.text;
     
     NSURL *URL = [NSURL URLWithString:URLString];
@@ -98,14 +105,20 @@
     NSString *replacedString = [URLString stringByReplacingOccurrencesOfString:
                           @" " withString: @"%20"];
     NSArray *componentsSeparatedByWhiteSpace = [URLString componentsSeparatedByString:@" "];
-
-    if ([componentsSeparatedByWhiteSpace count] > 1) {
-        URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://google.com/search?q='%@'", replacedString]];
-    }
     
-    if (!URL.scheme) {
-        URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", URLString]];
-        NSLog(@"%@", [URL absoluteString]);
+    if ([URLString rangeOfString:@".com"].location == !NSNotFound || [URLString rangeOfString:@".net"].location == !NSNotFound || [URLString rangeOfString:@".org"].location == !NSNotFound) {
+        if (!URL.scheme) {
+            URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", URLString]];
+            NSLog(@"%@", [URL absoluteString]);
+        }
+    } else {
+        if ([componentsSeparatedByWhiteSpace count] > 1) {
+            URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://google.com/search?q='%@'", replacedString]];
+            NSLog(@"with space");
+        } else {
+            URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://google.com/search?q='%@'", URLString]];
+            NSLog(@"no space or url syntax");
+        }
     }
     
     if (URL) {
