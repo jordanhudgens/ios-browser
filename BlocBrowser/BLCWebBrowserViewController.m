@@ -169,10 +169,11 @@
     newWebView.delegate = self;
     [self.view addSubview:newWebView];
     
-    self.view = newWebView;
+    self.webView = newWebView;
     
     self.textField.text = nil;
     [self updateButtonsAndTitle];
+    
 }
 
 #pragma mark - BLCFloatingToolbarDelegate
