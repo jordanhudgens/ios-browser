@@ -18,6 +18,7 @@
 
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
 
 @property (nonatomic, strong) UILongPressGestureRecognizer *longTouch;
 
@@ -80,12 +81,29 @@
         [self addGestureRecognizer:self.tapGesture];
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
         [self addGestureRecognizer:self.panGesture];
+        self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchFired:)];
+        [self addGestureRecognizer:self.pinchGesture];
         
         self.longTouch = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longFired:)];
         [self addGestureRecognizer:self.longTouch];
+        
     }
     
     return self;
+}
+
+- (void) pinchFired:(UIPinchGestureRecognizer *)recognizer {
+    
+    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+        NSLog(@"PINCH %f" , [recognizer scale]);
+//        [recognizer scale]
+        CGRect oldBounds = self.bounds;
+        self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width*[recognizer scale], self.frame.size.height*[recognizer scale]);
+        oldBounds = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width*[recognizer scale], self.bounds.size.height*[recognizer scale]);
+//        self.frame = self.bounds;
+//        [self reloadInputViews];
+        [self layoutSubviews: self.frame];
+    }
 }
 
 - (void) tapFired:(UITapGestureRecognizer *)recognizer {
@@ -124,27 +142,39 @@
         int n = (arc4random() % nElements) + i;
         [self.colors exchangeObjectAtIndex:i withObjectAtIndex:n];
     }
+    
+    
+    for (UILabel *label in self.labels) {
+        NSUInteger currentTitleIndex = [self.labels indexOfObject:label];
+        UIColor *colorForThisLabel = [self.colors objectAtIndex:currentTitleIndex];
+        label.backgroundColor = colorForThisLabel;
+    }
 }
 
-- (void) layoutSubviews {
+- (void) layoutSubviews{
+    [self layoutSubviews: self.bounds];
+}
+
+- (void) layoutSubviews: (CGRect) bounds {
+
     for (UILabel *thisLabel in self.labels) {
         NSUInteger currentLabelIndex = [self.labels indexOfObject:thisLabel];
         
-        CGFloat labelHeight = CGRectGetHeight(self.bounds) / 2;
-        CGFloat labelWidth = CGRectGetWidth(self.bounds) / 2;
+        CGFloat labelHeight = CGRectGetHeight(bounds) / 2;
+        CGFloat labelWidth = CGRectGetWidth(bounds) / 2;
         CGFloat labelX = 0;
         CGFloat labelY = 0;
         
         if (currentLabelIndex < 2) {
             labelY = 0;
         } else {
-            labelY = CGRectGetHeight(self.bounds) / 2;
+            labelY = CGRectGetHeight(bounds) / 2;
         }
         
         if (currentLabelIndex % 2 == 0) {
             labelX = 0;
         } else {
-            labelX = CGRectGetWidth(self.bounds) / 2;
+            labelX = CGRectGetWidth(bounds) / 2;
         }
         
         thisLabel.frame = CGRectMake(labelX, labelY, labelWidth, labelHeight);
