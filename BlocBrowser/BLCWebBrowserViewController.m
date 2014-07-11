@@ -83,7 +83,12 @@
     self.textField.frame = CGRectMake(0, 0, width, itemHeight);
     self.webView.frame = CGRectMake(0, CGRectGetMaxY(self.textField.frame), width, browserHeight);
     
-    self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 60);
+    CGRect frame = self.awesomeToolbar.frame;
+    NSLog(@"%f %f %f %f frame", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+    if (frame.size.width == 0 && frame.size.height == 0) {
+        self.awesomeToolbar.frame = CGRectMake(20, 100, 280, 60);
+    }
+    
 }
 
 #pragma mark - UITextFieldDelegate
@@ -211,7 +216,7 @@
     
     CGRect potentialNewFrame = CGRectMake(newPoint.x, newPoint.y, CGRectGetWidth(toolbar.frame), CGRectGetHeight(toolbar.frame));
     
-    if (CGRectContainsRect(self.view.bounds, potentialNewFrame)) {
+    if (CGRectContainsRect(self.view.frame, potentialNewFrame)) {
         toolbar.frame = potentialNewFrame;
     }
 }
